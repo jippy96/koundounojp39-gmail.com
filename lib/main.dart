@@ -18,12 +18,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      // theme: ThemeData(
-      //   primarySwatch: Colors.blue,
-      //   // appBarTheme: appBar,
-      //   // backgroundColor: appBar
-      // ),
       home: MyHomePage(),
       
       debugShowCheckedModeBanner: false,
@@ -43,6 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // List<dynamic> pharmacies = [];
   List<int> colors = [600,500,100];
   List<Pharmacie> pharmacies =[];
+
+  var reponse;
 
   @override
   void initState() {
@@ -80,8 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
                context: context,
                child: AlertDialog(
                  title: Text("Paramétrage du Serveur"),
-                 content: Text("test"),
+                 content: Text("ToDo"),
                  actions: <Widget>[
+                  MaterialButton(onPressed: (){
+
+                  },
+                  child: Text("Valider",style: TextStyle(color: Colors.blue),),
+                  ),
                   MaterialButton(onPressed: (){
                     Navigator.pop(context);
                   },
@@ -112,30 +113,76 @@ class _MyHomePageState extends State<MyHomePage> {
          BuildForm(),
          Container(
            margin: EdgeInsets.only(top: 30, left: 20, right: 20),
-           height: 800,
-          //  color: Colors.red,
-           child: ListView.builder(
+           height: 340,
+           child: (pharmacies.length == 0) ? 
+           listVide() 
+           :
+           ListView.builder(
              itemCount: pharmacies.length,
              itemBuilder: (BuildContext context, int index){
-               return Container(
-                 height: 50,
-                 color: Color.fromARGB(200, 7, 35, 48),
-                 child: Padding(
-                   padding: EdgeInsets.only(top: 15),
-                   child: Text("${pharmacies[index].nom} - ${pharmacies[index].adresse}",
-                   
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, color: Colors.white),
-                 )
+               return Card(
+                 elevation: 10,
+                 child: Container(
+                   height: 90,
+                   child: ListTile(
+                     
+                     title: Text("${pharmacies[index].nom.toUpperCase()}",
+                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                     ),
+                     subtitle: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: <Widget>[
+                         Padding(
+                           padding: const EdgeInsets.only(top: 5),
+                           child: Text("${pharmacies[index].contact}",
+                           style: TextStyle(color: Colors.red, fontSize: 18),),
+                          ),
+                         Padding(
+                           padding: const EdgeInsets.only(top: 5),
+                           child: Text("Adresse: ${pharmacies[index].adresse}",
+                           style: TextStyle(color: Colors.black, fontSize: 18,fontStyle: FontStyle.italic),),
+                          ),
+                       ],
+                     ),
+                     trailing: IconButton(
+                       icon: Icon(Icons.call, color: Colors.blue,),
+                       onPressed: (){
+
+                       },
+                     ),
+                   ),
                  ),
                );
-             },            
+             }, 
              scrollDirection: Axis.vertical,
              
            ),
          )
         ],
-      )
+      ),
+      bottomNavigationBar: Container(
+        height: 50,
+        color: Color.fromARGB(255, 7, 35, 48),
+        child: Center(
+          child: Text("CeSoTech", style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.green
+          ),
+          textScaleFactor: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget listVide(){
+    
+    print(pharmacies);
+    return Card(
+          child: Container(
+            height: 20,
+            child: Text("Aucune donnée disponible pour l'instant"),
+      ),
     );
   }
 
@@ -143,15 +190,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final String url = "https://www.madmakiti.com/paracetamol/teguilab";
 
-    var reponse = await http.get(url);
+    reponse = await http.get(url);
 
     if (reponse.statusCode == 200) {
 
       Pharmacie pharmacie = Pharmacie();
       // print(reponse.body);
       List data = json.decode(reponse.body);
+      // print(data[0]["contactPharmacie"]);
 
-      pharmacies.add(pharmacie.fromJSON(data, pharmacie));
+      if (data.length != null) {
+        setState(() {
+            pharmacies.add(pharmacie.fromJSON(data, pharmacie));
+        });
+      }
       
     }
 

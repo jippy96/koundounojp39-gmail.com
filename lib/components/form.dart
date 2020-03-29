@@ -21,9 +21,10 @@ class _BuildForm extends State<BuildForm> {
                 child: TextFormField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    // border: InputBorder.,
-                    // enabledBorder: ,
+                   hintText: "Ex: Paracétamol",
                     labelText: "Nom du Produit",
+                    focusColor: Color.fromARGB(255, 7, 35, 48),
+                    
                     fillColor: Colors.blue,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),                    
