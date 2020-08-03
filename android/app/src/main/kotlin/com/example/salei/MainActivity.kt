@@ -1,4 +1,4 @@
-package com.example.cesotech
+package com.example.salei
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

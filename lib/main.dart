@@ -1,14 +1,11 @@
-import 'dart:convert' as convert;
-import 'dart:convert';
 import 'dart:ui';
 
-import 'package:cesotech/components/form.dart';
-import 'package:cesotech/components/pharmacie.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:salei/pages/home.dart';
+import 'package:salei/widget/listPharmacie.dart';
 
 // My Own import here
-import 'package:cesotech/style/style.dart';
 
 
 void main() => runApp(MyApp());
@@ -18,8 +15,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
-      
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        // primaryColor: Color(0xff161635),
+        primaryColor: Color.fromARGB(255, 7, 35, 51),
+        scaffoldBackgroundColor: Color(0xffffffff),
+        bottomAppBarColor: Colors.black,
+        accentColor: Colors.transparent,
+      ),
+      home: Home(),      
       debugShowCheckedModeBanner: false,
     );
   }
@@ -34,178 +38,95 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   
-  // List<dynamic> pharmacies = [];
-  List<int> colors = [600,500,100];
-  List<Pharmacie> pharmacies =[];
+  // final _key = GlobalKey<FormState>();
 
-  var reponse;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    callApi();
-  }
   @override
   Widget build(BuildContext context) {
    
+  double hauteur = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(        
-        title: RichText(          
-          text: TextSpan(
-            text: 'Salei',            
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 28,
-              fontWeight: FontWeight.bold
-            ),
-            children: [
-              TextSpan(text: 'CeSoTech', style: TextStyle(color: Colors.green))
-            ]
-          )
+        title: Text(
+          "Salei",
+          style: TextStyle(
+            color: Colors.red
+          ),
         ),
         backgroundColor: Color.fromARGB(255, 7, 35, 48),
         leading: GestureDetector(
-          child: CircleAvatar(
-            child: Image.asset("images/logo/logo.png"),
+          child: CircleAvatar(            
+            child: Image.asset("images/logo/logo.png",
+            ),
           ),
         ),
         actions: <Widget>[
          InkWell(
-           onTap: (){
-             return showDialog(
-               context: context,
-               child: AlertDialog(
-                 title: Text("Paramétrage du Serveur"),
-                 content: Text("ToDo"),
-                 actions: <Widget>[
-                  MaterialButton(onPressed: (){
-
-                  },
-                  child: Text("Valider",style: TextStyle(color: Colors.blue),),
-                  ),
-                  MaterialButton(onPressed: (){
-                    Navigator.pop(context);
-                  },
-                  child: Text("Fermer"),
-                  )
-                 ],
-               )
-            );
-           },
+          //  onTap: (){
+          //    return showDialog(
+          //      context: context,
+          //      child: AlertDialog(
+          //        title: Text("Paramétrage du Serveur"),
+          //        content: Form(
+          //          child: Padding(
+          //            padding: EdgeInsetsDirectional.only(top: 0),
+          //            child: TextFormField(
+          //              keyboardType: TextInputType.url,
+          //              validator: (value){
+          //               if (value.isEmpty) {
+          //                 return 'Veuillez saisir une adresse valide';
+          //               }
+          //               return null;
+          //              },
+          //             //  onSaved: (value) => _adresseServeur = value,
+          //              decoration: InputDecoration(
+          //                hintText: 'Ex: www.exemple.com'
+          //              ),
+          //            ),
+          //          ),
+          //        ),
+          //        actions: <Widget>[
+          //         MaterialButton(onPressed: (){
+                    
+          //             Navigator.pop(context);
+                    
+          //         },
+          //         child: Text("Valider",style: TextStyle(color: Colors.blue),),
+          //         ),
+          //         MaterialButton(onPressed: (){
+          //           Navigator.pop(context);
+          //         },
+          //         child: Text("Fermer"),
+          //         )
+          //        ],
+          //      )
+          //   );
+          //  },
            child:  Padding(
             padding: EdgeInsets.only(right: 10,),
-            child: Icon(Icons.settings, size: 36,),
+            child: Icon(Icons.settings, size: 26,),
           ),
          )
         ],
       ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 50),
-            child: Text(
-              "Trouvez votre médicament sans vous déplacer",
-              textScaleFactor: 1.1,
-              textAlign: TextAlign.center,
-              style: titre1,
-            ),
-          ),
-         BuildForm(),
-         Container(
-           margin: EdgeInsets.only(top: 30, left: 20, right: 20),
-           height: 340,
-           child: (pharmacies.length == 0) ? 
-           listVide() 
-           :
-           ListView.builder(
-             itemCount: pharmacies.length,
-             itemBuilder: (BuildContext context, int index){
-               return Card(
-                 elevation: 10,
-                 child: Container(
-                   height: 90,
-                   child: ListTile(
-                     
-                     title: Text("${pharmacies[index].nom.toUpperCase()}",
-                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                     ),
-                     subtitle: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       children: <Widget>[
-                         Padding(
-                           padding: const EdgeInsets.only(top: 5),
-                           child: Text("${pharmacies[index].contact}",
-                           style: TextStyle(color: Colors.red, fontSize: 18),),
-                          ),
-                         Padding(
-                           padding: const EdgeInsets.only(top: 5),
-                           child: Text("Adresse: ${pharmacies[index].adresse}",
-                           style: TextStyle(color: Colors.black, fontSize: 18,fontStyle: FontStyle.italic),),
-                          ),
-                       ],
-                     ),
-                     trailing: IconButton(
-                       icon: Icon(Icons.call, color: Colors.blue,),
-                       onPressed: (){
-
-                       },
-                     ),
-                   ),
-                 ),
-               );
-             }, 
-             scrollDirection: Axis.vertical,
-             
-           ),
-         )
-        ],
-      ),
+      body: GestureDetector(
+        onTap: (){
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: ListPharmacie()) ,
       bottomNavigationBar: Container(
-        height: 50,
+        height: (hauteur >= 600 && hauteur <=900) ? 30 : 25,
         color: Color.fromARGB(255, 7, 35, 48),
         child: Center(
           child: Text("CeSoTech", style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.green
           ),
-          textScaleFactor: 1.5,
+          textScaleFactor: 1.2,
           ),
         ),
       ),
     );
   }
 
-  Widget listVide(){
-    
-    print(pharmacies);
-    return Card(
-          child: Container(
-            height: 20,
-            child: Text("Aucune donnée disponible pour l'instant"),
-      ),
-    );
-  }
-
-  void callApi() async{
-
-    final String url = "https://www.madmakiti.com/paracetamol/teguilab";
-
-    reponse = await http.get(url);
-
-    if (reponse.statusCode == 200) {
-
-      Pharmacie pharmacie = Pharmacie();
-      // print(reponse.body);
-      List data = json.decode(reponse.body);
-      // print(data[0]["contactPharmacie"]);
-
-      if (data.length != null) {
-        setState(() {
-            pharmacies.add(pharmacie.fromJSON(data, pharmacie));
-        });
-      }
-      
-    }
-
-  }
 }

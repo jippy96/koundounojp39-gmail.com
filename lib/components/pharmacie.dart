@@ -5,14 +5,16 @@ class Pharmacie {
   String lat;
   String contact;
   String long;
+  String libelleArticle;
 
-  Pharmacie fromJSON(List map, Pharmacie pharmacie){
+  Pharmacie fromJSON(Map map, Pharmacie pharmacie){
 
-    pharmacie.nom = map[0]["nomPharmacie"];
-    pharmacie.adresse = map[0]["adressePharmacie"];
-    pharmacie.lat = map[0]["latitude"];
-    pharmacie.long = map[0]["longitude"];
-    pharmacie.contact = map[0]["contactPharmacie"];
+    pharmacie.nom = map["nomPharmacie"];
+    pharmacie.adresse = map["adressePharmacie"];
+    pharmacie.lat = map["latitude"];
+    pharmacie.long = map["longitude"];
+    pharmacie.contact = map["contactPharmacie"];
+    pharmacie.libelleArticle = map["libelleArticle"];
 
     return pharmacie;
   }
